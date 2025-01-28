@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { authAPI } from '../utils/api';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,12 +16,42 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await authAPI.login(formData);
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('userType', response.data.user_type);
-      navigate(`/${response.data.user_type.toLowerCase()}`);
+      const response = await fetch('http://localhost:5000/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userType', data.user_type);
+        
+        // Redirect based on user type
+        switch (data.user_type) {
+          case 'admin':
+            navigate('/admin');
+            break;
+          case 'charity':
+            navigate('/charity');
+            break;
+          case 'donor':
+            navigate('/donor');
+            break;
+          default:
+            navigate('/');
+        }
+
+        // Force a page reload to update the navbar
+        window.location.reload();
+      } else {
+        setError(data.error || 'Login failed');
+      }
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to login');
+      setError('Failed to connect to the server');
     } finally {
       setLoading(false);
     }

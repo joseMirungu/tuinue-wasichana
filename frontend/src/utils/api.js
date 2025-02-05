@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const API_URL = process.env.REACT_APP_API_URL;
 
 const api = axios.create({
   baseURL: API_URL,
@@ -18,7 +18,7 @@ api.interceptors.request.use(config => {
   return config;
 });
 
-// Handle 401 responses
+// Error handling
 api.interceptors.response.use(
   response => response,
   error => {
@@ -30,6 +30,7 @@ api.interceptors.response.use(
   }
 );
 
+// Export API functions
 export const authAPI = {
   login: (credentials) => api.post('/auth/login', credentials),
   register: (userData) => api.post('/auth/register', userData),
@@ -59,3 +60,5 @@ export const adminAPI = {
   rejectCharity: (charityId) => api.post(`/admin/charity-applications/${charityId}/reject`),
   deleteCharity: (charityId) => api.delete(`/admin/charities/${charityId}`),
 };
+
+export default api;

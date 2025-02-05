@@ -16,7 +16,8 @@ def create_app(config_class=Config):
     db.init_app(app)
     jwt.init_app(app)
     migrate.init_app(app, db)
-    CORS(app)
+    
+    CORS(app, resources={r"/*": {"origins": app.config['CORS_ORIGINS']}})
     
     from app.routes import auth, admin, charity, donor
     app.register_blueprint(auth.bp)

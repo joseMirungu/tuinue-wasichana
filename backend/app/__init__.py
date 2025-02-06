@@ -17,7 +17,14 @@ def create_app(config_class=Config):
     jwt.init_app(app)
     migrate.init_app(app, db)
     
-    CORS(app, resources={r"/*": {"origins": app.config['CORS_ORIGINS']}})
+    # Updated CORS configuration
+    CORS(app, resources={
+        r"/*": {
+            "origins": ["https://tuinue-wasichana-j25zb6jip-josemirungus-projects.vercel.app"],
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"]
+        }
+    })
     
     from app.routes import auth, admin, charity, donor
     app.register_blueprint(auth.bp)

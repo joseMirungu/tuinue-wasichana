@@ -42,15 +42,15 @@ export const authAPI = {
       body: JSON.stringify({
         email: userData.email,
         password: userData.password,
-        user_type: userData.user_type
-      })
+        user_type: userData.userType 
+      }),
+      credentials: 'include'
     });
-    
+
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      throw new Error(error.message || 'Registration failed');
     }
-    
     return response.json();
   }
 };

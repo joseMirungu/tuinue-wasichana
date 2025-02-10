@@ -28,7 +28,8 @@ def create_app(config_class=Config):
     CORS(app, resources={
     r"/*": {
         "origins": [
-            "https://tuinue-wasichana-j25zb6jip-josemirungus-projects.vercel.app",
+            "https://tuinue-wasichana-b0j65grmx-josemirungus-projects.vercel.app",
+            "https://tuinue-wasichana-rosy.vercel.app",
             "http://localhost:3000"
         ],
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],

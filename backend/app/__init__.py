@@ -18,18 +18,31 @@ def create_app(config_class=Config):
     jwt.init_app(app)
     migrate.init_app(app, db)
     
-    # Configure CORS globally
+    # Configure CORS
+    app.config['CORS_HEADERS'] = 'Content-Type'
     CORS(app, 
          resources={r"/*": {
-             "origins": "*",  # Allow all origins temporarily
+             "origins": [
+                 "https://tuinue-wasichana-ql7ta417k-josemirungus-projects.vercel.app",
+                 "http://localhost:3000"
+             ],
              "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-             "allow_headers": ["Content-Type", "Authorization", "Accept"],
+             "allow_headers": ["Content-Type", "Authorization"],
+             "expose_headers": ["Content-Type"],
              "supports_credentials": True
          }})
 
+    @app.errorhandler(Exception)
+    def handle_error(error):
+        print(f"Error: {str(error)}")
+        return jsonify({"error": str(error)}), 500
+
     @app.route('/')
     def index():
-        return jsonify({"status": "success", "message": "Tuinue Wasichana API is running"})
+        return jsonify({
+            "status": "success",
+            "message": "Tuinue Wasichana API is running"
+        })
 
     # Register blueprints
     from app.routes import auth, admin, charity, donor

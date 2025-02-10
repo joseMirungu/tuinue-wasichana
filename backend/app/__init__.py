@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request  # Added request import
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
@@ -18,26 +18,22 @@ def create_app(config_class=Config):
     jwt.init_app(app)
     migrate.init_app(app, db)
     
-    # Configure CORS with production domains
+    # Configure CORS
     CORS(app, 
          resources={r"/*": {
-             "origins": [
-                 "https://tuinue-wasichana-lzf6l5q99-josemirungus-projects.vercel.app",
-                 "https://tuinue-wasichana-rosy.vercel.app",
-                 "http://localhost:3000"
-             ],
+             "origins": "*",  # Allow all origins for now
              "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
              "allow_headers": ["Content-Type", "Authorization"],
-             "supports_credentials": True
+             "expose_headers": ["Content-Type", "Authorization"],
+             "supports_credentials": True,
+             "max_age": 120
          }})
 
     @app.after_request
     def after_request(response):
-        response.headers.add('Access-Control-Allow-Origin', 
-                           'https://tuinue-wasichana-lzf6l5q99-josemirungus-projects.vercel.app')
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-        return response
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', '*')
+        response.headers.add('Access-Control-Allow-Methods', '*')
 
     # Root route
     @app.route('/')

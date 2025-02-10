@@ -19,8 +19,10 @@ const Register = () => {
     const response = await fetch('https://tuinue-wasichana-zwzs.onrender.com/auth/register', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
+      mode: 'cors',
       body: JSON.stringify({
         email: formData.email,
         password: formData.password,
@@ -28,12 +30,12 @@ const Register = () => {
       })
     });
 
-    if (!response.ok) {
-      const data = await response.json();
+    const data = await response.json();
+    if (response.ok) {
+      navigate('/login');
+    } else {
       throw new Error(data.error || 'Registration failed');
     }
-
-    navigate('/login');
   } catch (error) {
     console.error('Registration error:', error);
     setError(error.message);
@@ -41,7 +43,6 @@ const Register = () => {
     setLoading(false);
   }
 };
-
 
  return (
    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

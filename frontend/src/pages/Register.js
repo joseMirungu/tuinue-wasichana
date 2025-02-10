@@ -16,29 +16,35 @@ const Register = () => {
   e.preventDefault();
   setLoading(true);
   try {
+    console.log('Sending data:', {
+      email: formData.email,
+      password: formData.password,
+      user_type: formData.userType.toLowerCase()
+    });
+
     const response = await fetch('https://tuinue-wasichana-zwzs.onrender.com/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      mode: 'cors',
+      credentials: 'include',
       body: JSON.stringify({
         email: formData.email,
         password: formData.password,
-        user_type: formData.userType
+        user_type: formData.userType.toLowerCase()
       })
     });
 
-    const data = await response.json();
-    if (response.ok) {
-      navigate('/login');
-    } else {
-      throw new Error(data.error || 'Registration failed');
+    if (!response.ok) {
+      throw new Error('Registration failed');
     }
+
+    const data = await response.json();
+    navigate('/login');
   } catch (error) {
-    console.error('Registration error:', error);
     setError(error.message);
+    console.error('Registration error:', error);
   } finally {
     setLoading(false);
   }

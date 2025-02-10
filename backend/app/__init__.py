@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
@@ -12,6 +12,13 @@ migrate = Migrate()
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+    
+    @app.route('/')
+    def index():
+        return jsonify({
+            "status": "success",
+            "message": "Tuinue Wasichana API is running"
+        })
     
     db.init_app(app)
     jwt.init_app(app)

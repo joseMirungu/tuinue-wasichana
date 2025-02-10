@@ -19,26 +19,24 @@ const Register = () => {
     const response = await fetch('https://tuinue-wasichana-zwzs.onrender.com/auth/register', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         email: formData.email,
         password: formData.password,
-        user_type: formData.userType.toLowerCase()
+        user_type: formData.userType
       })
     });
 
-    const data = await response.json();
-    
-    if (response.ok) {
-      navigate('/login');
-    } else {
-      setError(data.message || 'Registration failed');
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.error || 'Registration failed');
     }
+
+    navigate('/login');
   } catch (error) {
-    setError('Failed to connect to server');
     console.error('Registration error:', error);
+    setError(error.message);
   } finally {
     setLoading(false);
   }

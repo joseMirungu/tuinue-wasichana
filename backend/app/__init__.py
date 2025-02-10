@@ -18,30 +18,18 @@ def create_app(config_class=Config):
     jwt.init_app(app)
     migrate.init_app(app, db)
     
-    # Configure CORS
+    # Configure CORS globally
     CORS(app, 
          resources={r"/*": {
-             "origins": "*",  # Allow all origins for now
+             "origins": "*",  # Allow all origins temporarily
              "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-             "allow_headers": ["Content-Type", "Authorization"],
-             "expose_headers": ["Content-Type", "Authorization"],
-             "supports_credentials": True,
-             "max_age": 120
+             "allow_headers": ["Content-Type", "Authorization", "Accept"],
+             "supports_credentials": True
          }})
 
-    @app.after_request
-    def after_request(response):
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        response.headers.add('Access-Control-Allow-Headers', '*')
-        response.headers.add('Access-Control-Allow-Methods', '*')
-
-    # Root route
     @app.route('/')
     def index():
-        return jsonify({
-            "status": "success",
-            "message": "Tuinue Wasichana API is running"
-        })
+        return jsonify({"status": "success", "message": "Tuinue Wasichana API is running"})
 
     # Register blueprints
     from app.routes import auth, admin, charity, donor

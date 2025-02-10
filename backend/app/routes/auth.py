@@ -1,17 +1,11 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
-from flask_cors import cross_origin
 from app.models.user import User, Profile
 from app import db
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.route('/register', methods=['POST', 'OPTIONS'])
-@cross_origin(origins=['https://tuinue-wasichana-5kvpfbxdc-josemirungus-projects.vercel.app',
-                      'https://tuinue-wasichana-rosy.vercel.app',
-                      'http://localhost:3000'],
-             methods=['POST', 'OPTIONS'],
-             allow_headers=['Content-Type', 'Accept'])
 def register():
     if request.method == 'OPTIONS':
         return jsonify({"message": "OK"}), 200
@@ -48,14 +42,9 @@ def register():
     except Exception as e:
         db.session.rollback()
         print(f"Registration error: {str(e)}")
-        return jsonify({'error': 'Registration failed'}), 500
+        return jsonify({'error': str(e)}), 500
 
 @bp.route('/login', methods=['POST', 'OPTIONS'])
-@cross_origin(origins=['https://tuinue-wasichana-5kvpfbxdc-josemirungus-projects.vercel.app',
-                      'https://tuinue-wasichana-rosy.vercel.app',
-                      'http://localhost:3000'],
-             methods=['POST', 'OPTIONS'],
-             allow_headers=['Content-Type', 'Accept'])
 def login():
     if request.method == 'OPTIONS':
         return jsonify({"message": "OK"}), 200
@@ -79,9 +68,6 @@ def login():
 
 @bp.route('/profile', methods=['GET'])
 @jwt_required()
-@cross_origin(origins=['https://tuinue-wasichana-5kvpfbxdc-josemirungus-projects.vercel.app',
-                      'https://tuinue-wasichana-rosy.vercel.app',
-                      'http://localhost:3000'])
 def get_profile():
     try:
         user_id = get_jwt_identity()
@@ -110,9 +96,6 @@ def get_profile():
 
 @bp.route('/profile', methods=['PUT'])
 @jwt_required()
-@cross_origin(origins=['https://tuinue-wasichana-5kvpfbxdc-josemirungus-projects.vercel.app',
-                      'https://tuinue-wasichana-rosy.vercel.app',
-                      'http://localhost:3000'])
 def update_profile():
     try:
         user_id = get_jwt_identity()

@@ -19,12 +19,16 @@ def create_app(config_class=Config):
     
     # Updated CORS configuration
     CORS(app, resources={
-        r"/*": {
-            "origins": ["https://tuinue-wasichana-j25zb6jip-josemirungus-projects.vercel.app"],
-            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-            "allow_headers": ["Content-Type", "Authorization"]
-        }
-    })
+    r"/*": {
+        "origins": [
+            "https://tuinue-wasichana-j25zb6jip-josemirungus-projects.vercel.app",
+            "http://localhost:3000"
+        ],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True
+    }
+})
     
     from app.routes import auth, admin, charity, donor
     app.register_blueprint(auth.bp)

@@ -12,29 +12,38 @@ const Register = () => {
  });
  const [error, setError] = useState('');
  const [loading, setLoading] = useState(false);
-
  const handleSubmit = async (e) => {
-   e.preventDefault();
-   if (formData.password !== formData.confirmPassword) {
-     setError('Passwords do not match');
-     return;
-   }
+  e.preventDefault();
+  setLoading(true);
+  try {
+    const response = await fetch('https://tuinue-wasichana-zwzs.onrender.com/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        email: formData.email,
+        password: formData.password,
+        user_type: formData.userType.toLowerCase()
+      })
+    });
 
-   setLoading(true);
-   try {
-     const response = await authAPI.register({
-       email: formData.email,
-       password: formData.password,
-       confirm_password: formData.confirmPassword,
-       user_type: formData.userType
-     });
-     navigate('/login');
-   } catch (error) {
-     setError(error.response?.data?.message || 'Registration failed');
-   } finally {
-     setLoading(false);
-   }
- };
+    const data = await response.json();
+    
+    if (response.ok) {
+      navigate('/login');
+    } else {
+      setError(data.message || 'Registration failed');
+    }
+  } catch (error) {
+    setError('Failed to connect to server');
+    console.error('Registration error:', error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
  return (
    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

@@ -33,8 +33,26 @@ api.interceptors.response.use(
 
 // Export API functions
 export const authAPI = {
-  login: (credentials) => api.post('/auth/login', credentials),
-  register: (userData) => api.post('/auth/register', userData),
+  register: async (userData) => {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: userData.email,
+        password: userData.password,
+        user_type: userData.user_type
+      })
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message);
+    }
+    
+    return response.json();
+  }
 };
 
 export const donorAPI = {

@@ -5,8 +5,8 @@ from datetime import datetime
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128))
-    user_type = db.Column(db.String(20))  # donor, charity, admin
+    password_hash = db.Column(db.String(256), nullable=False)  # Store hashed password
+    user_type = db.Column(db.String(20), nullable=False)  # donor, charity, admin
     is_verified = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
@@ -15,12 +15,15 @@ class User(db.Model):
     donations = db.relationship('Donation', backref='donor', lazy=True)
 
     def set_password(self, password):
+        """Hashes the password before storing it."""
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
+        """Verifies the password against the stored hash."""
         return check_password_hash(self.password_hash, password)
 
     def to_dict(self):
+        """Convert user object to dictionary for JSON responses."""
         return {
             'id': self.id,
             'email': self.email,

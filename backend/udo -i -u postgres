@@ -1,0 +1,10 @@
+[0;1;32m●[0m postgresql.service - PostgreSQL RDBMS
+     Loaded: loaded (/lib/systemd/system/postgresql.service; enabled; vendor preset: enabled)
+     Active: [0;1;32mactive (exited)[0m since Wed 2025-02-05 15:33:32 EAT; 2min 20s ago
+   Main PID: 32347 (code=exited, status=0/SUCCESS)
+      Tasks: 0 (limit: 18894)
+     Memory: 0B
+     CGroup: /system.slice/postgresql.service
+
+Gur 05 15:33:32 godfrey-HP-ProBook-430-G7 systemd[1]: Starting PostgreSQL RDBMS...
+Gur 05 15:33:32 godfrey-HP-ProBook-430-G7 systemd[1]: Finished PostgreSQL RDBMS.

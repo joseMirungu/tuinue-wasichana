@@ -7,9 +7,9 @@ from app.models.story import Story
 import stripe
 from app import db
 
-bp = Blueprint('donor', __name__, url_prefix='/donor')
+donor_bp = Blueprint('donor', __name__, url_prefix='/donor')  # Changed 'bp' to 'donor_bp'
 
-@bp.before_request
+@donor_bp.before_request
 @jwt_required()
 def verify_donor():
     user_id = get_jwt_identity()
@@ -17,7 +17,7 @@ def verify_donor():
     if not user or user.user_type != 'donor':
         return jsonify({'error': 'Donor access required'}), 403
 
-@bp.route('/dashboard', methods=['GET'])
+@donor_bp.route('/dashboard', methods=['GET'])
 def get_dashboard():
     user_id = get_jwt_identity()
     total_donated = db.session.query(db.func.sum(Donation.amount))\
@@ -46,12 +46,12 @@ def get_dashboard():
         } for rd in recurring_donations]
     })
 
-@bp.route('/charities', methods=['GET'])
+@donor_bp.route('/charities', methods=['GET'])
 def get_charities():
     charities = Charity.query.filter_by(status='approved').all()
     return jsonify([charity.to_dict() for charity in charities])
 
-@bp.route('/create-payment-intent', methods=['POST'])
+@donor_bp.route('/create-payment-intent', methods=['POST'])
 def create_payment_intent():
     try:
         data = request.get_json()
@@ -69,7 +69,7 @@ def create_payment_intent():
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
-@bp.route('/setup-recurring', methods=['POST'])
+@donor_bp.route('/setup-recurring', methods=['POST'])
 def setup_recurring():
     try:
         data = request.get_json()
@@ -89,7 +89,7 @@ def setup_recurring():
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
-@bp.route('/recurring/<int:donation_id>', methods=['PUT'])
+@donor_bp.route('/recurring/<int:donation_id>', methods=['PUT'])
 def update_recurring(donation_id):
     recurring = RecurringDonation.query.get_or_404(donation_id)
     if recurring.donor_id != get_jwt_identity():
@@ -104,7 +104,7 @@ def update_recurring(donation_id):
     db.session.commit()
     return jsonify({'message': 'Recurring donation updated successfully'})
 
-@bp.route('/donations', methods=['GET'])
+@donor_bp.route('/donations', methods=['GET'])
 def get_donations():
     user_id = get_jwt_identity()
     donations = Donation.query\
@@ -113,7 +113,7 @@ def get_donations():
         .all()
     return jsonify([d.to_dict() for d in donations])
 
-@bp.route('/stories', methods=['GET'])
+@donor_bp.route('/stories', methods=['GET'])
 def get_stories():
     stories = Story.query\
         .join(Charity)\

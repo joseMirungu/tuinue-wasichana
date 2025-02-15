@@ -1,185 +1,108 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { loadStripe } from '@stripe/stripe-js';
-import { CardElement, Elements, useStripe, useElements } from '@stripe/react-stripe-js';
+import React, { useState } from "react";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import { useNavigate } from "react-router-dom";
 
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
-
-const CARD_ELEMENT_OPTIONS = {
-  style: {
-    base: {
-      fontSize: '16px',
-      color: '#424770',
-      '::placeholder': {
-        color: '#aab7c4',
-      },
-    },
-    invalid: {
-      color: '#9e2146',
-    },
-  },
-};
-
-const DonationFormContent = ({ charity, onSuccess }) => {
-  const stripe = useStripe();
-  const elements = useElements();
+const DonationForm = ({ charity }) => {
   const navigate = useNavigate();
   const [donationData, setDonationData] = useState({
-    amount: '',
+    amount: "",
     isRecurring: false,
     isAnonymous: false,
-    recurringDay: '1',
-    currency: 'USD'
+    currency: "USD",
   });
+
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!stripe || !elements) {
-      return;
-    }
-
-    setLoading(true);
+  const createOrder = async () => {
     try {
-      const response = await fetch('http://localhost:5000/donor/create-payment-intent', {
-        method: 'POST',
+      const response = await fetch("http://localhost:5000/paypal/create-order", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
-          amount: parseFloat(donationData.amount) * 100,
-          charity_id: charity?.id || 1,  // Default to 1 if no charity specified
-          is_recurring: donationData.isRecurring,
-          is_anonymous: donationData.isAnonymous,
-          recurring_day: parseInt(donationData.recurringDay),
-          currency: donationData.currency
-        })
+          amount: donationData.amount,
+          currency: donationData.currency,
+        }),
       });
 
-      const { clientSecret } = await response.json();
-      
-      const result = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: elements.getElement(CardElement),
-          billing_details: {
-            name: donationData.isAnonymous ? 'Anonymous Donor' : undefined,
-          },
-        }
-      });
-
-      if (result.error) {
-        setError(result.error.message);
-      } else if (result.paymentIntent.status === 'succeeded') {
-        onSuccess?.(result.paymentIntent);
-        navigate('/donor');
+      const data = await response.json();
+      if (response.ok) {
+        return data.orderID;
+      } else {
+        throw new Error(data.error || "Failed to create order");
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
-      console.error('Payment error:', err);
-    } finally {
-      setLoading(false);
+      console.error("Order creation error:", err);
+      setError("Error creating PayPal order");
+    }
+  };
+
+  const captureOrder = async (orderID) => {
+    try {
+      const response = await fetch("http://localhost:5000/paypal/capture", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          transaction_id: orderID,
+          donation_id: charity?.id || 1, // Default to 1 if no charity specified
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        navigate("/donor");
+      } else {
+        throw new Error(data.error || "Payment capture failed");
+      }
+    } catch (err) {
+      console.error("Capture error:", err);
+      setError("Error capturing payment");
     }
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6 max-w-lg mx-auto">
-      <h3 className="text-xl font-bold text-gray-900 mb-6">Make a Donation</h3>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {error && (
-          <div className="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded">
-            {error}
-          </div>
-        )}
+    <PayPalScriptProvider options={{ "client-id": process.env.REACT_APP_PAYPAL_CLIENT_ID }}>
+      <div className="bg-white rounded-lg shadow p-6 max-w-lg mx-auto">
+        <h3 className="text-xl font-bold text-gray-900 mb-6">Make a Donation</h3>
+
+        {error && <div className="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded">{error}</div>}
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Amount ({donationData.currency})
-          </label>
-          <div className="relative rounded-md shadow-sm">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-              <span className="text-gray-500 sm:text-sm">$</span>
-            </div>
-            <input
-              type="number"
-              min="1"
-              step="0.01"
-              required
-              className="pl-7 block w-full pr-12 sm:text-sm border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
-              placeholder="0.00"
-              value={donationData.amount}
-              onChange={(e) => setDonationData({ ...donationData, amount: e.target.value })}
-            />
-          </div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Amount ({donationData.currency})</label>
+          <input
+            type="number"
+            min="1"
+            step="0.01"
+            required
+            className="block w-full border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+            placeholder="0.00"
+            value={donationData.amount}
+            onChange={(e) => setDonationData({ ...donationData, amount: e.target.value })}
+          />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Card Details
-          </label>
-          <div className="border border-gray-300 rounded-md p-3">
-            <CardElement options={CARD_ELEMENT_OPTIONS} />
-          </div>
+        <div className="mt-4">
+          <PayPalButtons
+            style={{ layout: "vertical" }}
+            createOrder={createOrder}
+            onApprove={(data) => captureOrder(data.orderID)}
+            onError={(err) => {
+              console.error("PayPal error:", err);
+              setError("Payment failed. Please try again.");
+              console.log("PayPal Client ID:", process.env.REACT_APP_PAYPAL_CLIENT_ID);
+
+            }}
+          />
         </div>
-
-        <div className="flex flex-col space-y-4">
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-              checked={donationData.isRecurring}
-              onChange={(e) => setDonationData({ ...donationData, isRecurring: e.target.checked })}
-            />
-            <span className="ml-2 text-gray-700">Make this a monthly donation</span>
-          </label>
-
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-              checked={donationData.isAnonymous}
-              onChange={(e) => setDonationData({ ...donationData, isAnonymous: e.target.checked })}
-            />
-            <span className="ml-2 text-gray-700">Donate anonymously</span>
-          </label>
-        </div>
-
-        {donationData.isRecurring && (
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Monthly donation day
-            </label>
-            <select
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm rounded-md"
-              value={donationData.recurringDay}
-              onChange={(e) => setDonationData({ ...donationData, recurringDay: e.target.value })}
-            >
-              {[...Array(28)].map((_, i) => (
-                <option key={i + 1} value={i + 1}>
-                  {i + 1}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-
-        <button
-          type="submit"
-          disabled={!stripe || loading}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
-        >
-          {loading ? 'Processing...' : 'Donate Now'}
-        </button>
-      </form>
-    </div>
+      </div>
+    </PayPalScriptProvider>
   );
 };
-
-const DonationForm = (props) => (
-  <Elements stripe={stripePromise}>
-    <DonationFormContent {...props} />
-  </Elements>
-);
 
 export default DonationForm;

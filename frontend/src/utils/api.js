@@ -18,6 +18,16 @@ api.interceptors.request.use(config => {
   return config;
 });
 
+
+// const charityAPI = {
+//   getStats: () => axios.get('/api/charity/stats'),
+//   getBeneficiaries: () => axios.get('/api/charity/beneficiaries'),
+//   getStories: () => axios.get('/api/charity/stories'),
+//   createStory: (data) => axios.post('/api/charity/stories', data)
+// };
+
+export { charityAPI };
+
 // Error handling
 api.interceptors.response.use(
   response => response,

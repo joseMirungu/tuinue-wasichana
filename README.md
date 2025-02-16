@@ -93,6 +93,10 @@ tuinue-wasichana/
 ## API Documentation
 The API documentation is available at `/api/docs` when running the backend server.
 
+### presentation slides - https://www.canva.com/design/DAGe5k1rl-M/974ABTCb93LO6efQkPvo2A/edit?utm_content=DAGe5k1rl-M&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+### Frontend link - https://tuinue-wasichana-j25zb6jip-josemirungus-projects.vercel.app/
+
+
 ## Contributing
 1. Fork the repository
 2. Create a new branch

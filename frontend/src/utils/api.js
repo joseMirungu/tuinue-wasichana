@@ -2,15 +2,16 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+// Create an Axios instance with default configuration
 const api = axios.create({
   baseURL: API_URL,
   headers: {
-    'Content-Type': 'application/json'
-  }
+    'Content-Type': 'application/json',
+  },
 });
 
 // Add token to requests if available
-api.interceptors.request.use(config => {
+api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -18,21 +19,12 @@ api.interceptors.request.use(config => {
   return config;
 });
 
-
-// const charityAPI = {
-//   getStats: () => axios.get('/api/charity/stats'),
-//   getBeneficiaries: () => axios.get('/api/charity/beneficiaries'),
-//   getStories: () => axios.get('/api/charity/stories'),
-//   createStory: (data) => axios.post('/api/charity/stories', data)
-// };
-
-export { charityAPI };
-
-// Error handling
+// Error handling for responses
 api.interceptors.response.use(
-  response => response,
-  error => {
+  (response) => response,
+  (error) => {
     if (error.response?.status === 401) {
+      // If unauthorized, remove token and redirect to login
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
@@ -40,12 +32,13 @@ api.interceptors.response.use(
   }
 );
 
-// Export API functions
+// Auth API
 export const authAPI = {
   login: (credentials) => api.post('/auth/login', credentials),
   register: (userData) => api.post('/auth/register', userData),
 };
 
+// Donor API
 export const donorAPI = {
   getDashboard: () => api.get('/donor/dashboard'),
   getCharities: () => api.get('/donor/charities'),
@@ -54,15 +47,17 @@ export const donorAPI = {
   getStories: () => api.get('/donor/stories'),
 };
 
+// Charity API
 export const charityAPI = {
   getStats: () => api.get('/charity/stats'),
   getBeneficiaries: () => api.get('/charity/beneficiaries'),
   addBeneficiary: (beneficiaryData) => api.post('/charity/beneficiaries', beneficiaryData),
   getStories: () => api.get('/charity/stories'),
-  createStory: (formData) => api.post('/charity/stories', formData),
+  createStory: (storyData) => api.post('/charity/stories', storyData),
   addSupplies: (supplyData) => api.post('/charity/supplies', supplyData),
 };
 
+// Admin API
 export const adminAPI = {
   getStats: () => api.get('/admin/stats'),
   getCharityApplications: () => api.get('/admin/charity-applications'),
@@ -71,4 +66,5 @@ export const adminAPI = {
   deleteCharity: (charityId) => api.delete(`/admin/charities/${charityId}`),
 };
 
+// Export the Axios instance for custom requests
 export default api;

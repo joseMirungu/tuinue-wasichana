@@ -52,6 +52,9 @@ def handle_beneficiaries():
 
     if request.method == 'POST':
         data = request.get_json()
+        if not data:
+            return jsonify({'error': 'Invalid request data'}), 400
+
         beneficiary = Beneficiary(
             charity_id=charity.id,
             name=data.get('name'),
@@ -85,25 +88,33 @@ def handle_stories():
     if request.method == 'POST':
         form_data = request.form
         image = request.files.get('image')
-        
+
+        # Validate required fields
+        if not form_data.get('title') or not form_data.get('content'):
+            return jsonify({'error': 'Title and content are required'}), 400
+
         image_url = None
         if image:
             try:
                 image_url = upload_image(image)
             except Exception as e:
                 return jsonify({'error': 'Image upload failed', 'details': str(e)}), 400
-            
+
         story = Story(
             charity_id=charity.id,
             title=form_data.get('title'),
             content=form_data.get('content'),
             image_url=image_url,
             beneficiary_name=form_data.get('beneficiary_name'),
-            impact_numbers=int(form_data.get('impact_numbers', 0))  # Fix integer conversion
+            location=form_data.get('location'),
+            impact_numbers=int(form_data.get('impact_numbers', 0)),
+            tags=form_data.get('tags', []),
+            is_featured=form_data.get('is_featured', 'false').lower() == 'true',
+            status=form_data.get('status', 'draft')
         )
         db.session.add(story)
         db.session.commit()
-        return jsonify({'message': 'Story created successfully'}), 201
+        return jsonify({'message': 'Story created successfully', 'story': story.to_dict()}), 201
 
     stories = Story.query.filter_by(charity_id=charity.id).order_by(Story.created_at.desc()).all()
     return jsonify([story.to_dict() for story in stories])
@@ -135,6 +146,9 @@ def handle_profile():
 
     if request.method == 'PUT':
         data = request.get_json()
+        if not data:
+            return jsonify({'error': 'Invalid request data'}), 400
+
         for field in ['name', 'description', 'contact_email', 'contact_phone', 'website']:
             if field in data:
                 setattr(charity, field, data[field])

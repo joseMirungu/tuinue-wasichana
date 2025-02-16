@@ -20,7 +20,6 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
     print("PayPal Client ID:", os.getenv("PAYPAL_CLIENT_ID"))  # Debugging
 
-    
     db.init_app(app)
     jwt.init_app(app)
     migrate.init_app(app, db)
@@ -46,7 +45,7 @@ def create_app(config_class=Config):
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(admin_bp, url_prefix='/admin')
-    app.register_blueprint(charity_bp, url_prefix='/charity')
+    app.register_blueprint(charity_bp, url_prefix='/charity')  # Ensure charity_bp is registered
     app.register_blueprint(donor_bp, url_prefix='/donor')
     app.register_blueprint(paypal_bp, url_prefix='/paypal')  # Register PayPal routes
 

@@ -12,6 +12,7 @@ import DonorDashboard from './pages/DonorDashboard';
 import CharityDashboard from './pages/CharityDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import DonationForm from './components/DonationForm';
+import AddStory from './pages/AddStory'; // Import the AddStory component
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -86,6 +87,7 @@ function App() {
             <Route path="/donor/profile" element={<DonorDashboard />} />
             <Route path="/charity/beneficiaries" element={<CharityDashboard />} />
             <Route path="/charity/stories" element={<CharityDashboard />} />
+            <Route path="/charity/stories/new" element={<AddStory />} /> {/* Add route for AddStory */}
             <Route path="/charity/profile" element={<CharityDashboard />} />
             <Route path="/admin/charities" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<AdminDashboard />} />

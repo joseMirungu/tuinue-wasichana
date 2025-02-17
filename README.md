@@ -96,7 +96,9 @@ The API documentation is available at `/api/docs` when running the backend serve
 ### presentation slides - https://www.canva.com/design/DAGe5k1rl-M/974ABTCb93LO6efQkPvo2A/edit?utm_content=DAGe5k1rl-M&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
 ### Frontend link - https://tuinue-wasichana-j25zb6jip-josemirungus-projects.vercel.app/
 
-https://mail.google.com/mail/u/0?ui=2&ik=df31190d16&attid=0.1&permmsgid=msg-f:1823869306395951591&th=194faf788c7801e7&view=att&disp=safe&realattid=f_m724bv9p0&zw
+![stories](https://github.com/user-attachments/assets/a2d3f0bd-4c71-47c9-bb36-9fa968364d2e)
+
+![landing pg](https://github.com/user-attachments/assets/cef84475-e373-46bc-b5e8-c16e1dc038f4)
 
 
 

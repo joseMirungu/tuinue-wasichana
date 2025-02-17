@@ -55,7 +55,7 @@ npm start
 cd backend
 pytest
 
-# Frontend tests
+## Frontend tests
 cd frontend
 npm test
 ```

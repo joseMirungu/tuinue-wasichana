@@ -110,6 +110,18 @@ The API documentation is available at `/api/docs` when running the backend serve
 
 ![aboutpage](https://github.com/user-attachments/assets/a1261acb-cfe5-4997-8558-6bd17628a7b9)
 
+![Screenshot from 2025-02-12 23-01-57](https://github.com/user-attachments/assets/d6f7f0b2-b678-491f-b2cb-845fa2e1f597)
+
+![Screenshot from 2025-02-12 23-02-01](https://github.com/user-attachments/assets/b8534265-c360-4e24-b307-28237a1d8484)
+
+![Screenshot from 2025-02-12 23-02-32](https://github.com/user-attachments/assets/03362818-85a1-4ad8-a36f-ff36e662eb25)
+
+![Screenshot from 2025-02-12 23-02-36](https://github.com/user-attachments/assets/89fa65f4-5dc7-41f5-aba2-6d4826ba1206)
+![Screenshot from 2025-02-12 23-02-06](https://github.com/user-attachments/assets/f112cf21-4785-448b-bf31-1ec5815de465)
+![Screenshot from 2025-02-12 23-02-17](https://github.com/user-attachments/assets/ffac5a65-91fd-462b-83d4-0622606668c0)
+![Screenshot from 2025-02-12 23-02-28](https://github.com/user-attachments/assets/8ae414f0-c2f9-42ef-9172-48358e17ddb8)
+![Uploading Screenshot from 2025-02-12 23-02-38.png…]()
+
 ## Contributing
 1. Fork the repository
 2. Create a new branch

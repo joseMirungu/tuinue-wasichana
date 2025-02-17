@@ -100,7 +100,15 @@ The API documentation is available at `/api/docs` when running the backend serve
 
 ![landing pg](https://github.com/user-attachments/assets/cef84475-e373-46bc-b5e8-c16e1dc038f4)
 
+![causes](https://github.com/user-attachments/assets/03f8763d-7827-45d5-b64e-60da66133ed0)
 
+![admin1](https://github.com/user-attachments/assets/87f30973-ff00-44ad-80b9-c03bd363fafc)
+
+![donate](https://github.com/user-attachments/assets/3a8f2b2f-e03c-41a3-9f18-4461f21ecad1)
+
+![forgotpassword](https://github.com/user-attachments/assets/495a6cbc-c318-40ca-baac-aef297d6fdfc)
+
+![aboutpage](https://github.com/user-attachments/assets/a1261acb-cfe5-4997-8558-6bd17628a7b9)
 
 ## Contributing
 1. Fork the repository
